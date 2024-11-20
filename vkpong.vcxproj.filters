@@ -13,30 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\platform">
-      <UniqueIdentifier>{35540dc7-7472-4adf-a2e1-58d684718cea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\renderer">
-      <UniqueIdentifier>{f97b939e-9246-49ee-a607-431d672f041e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\renderer">
-      <UniqueIdentifier>{39fbda32-e22f-4d0d-a00e-0cc7c9689eda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\platform">
-      <UniqueIdentifier>{1d3ed6c9-4e19-4b32-96ff-e09df302fa74}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="win32_platform.cpp">
-      <Filter>Source Files\platform</Filter>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="vk_renderer.cpp">
-      <Filter>Source Files\renderer</Filter>
+    <ClCompile Include="be_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="first_app.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="vk_renderer.h">
-      <Filter>Header Files\renderer</Filter>
+    <ClInclude Include="be_window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="first_app.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
