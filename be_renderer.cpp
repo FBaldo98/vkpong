@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <map>
+#include <set>
 
 namespace be {
 
@@ -62,7 +63,11 @@ namespace be {
 
 		setupDebugMessenger(debugCreateInfo);
 
+		createSurface();
+
 		getVkPhysicalDevice();
+
+		createLogicDevice();
 
 		return true;
 	}
@@ -137,6 +142,62 @@ namespace be {
 		return score;
 	}
 
+	void BeRenderer::createLogicDevice()
+	{
+		QueueFamilyIndices indices = findQueueFamilies(vkPhysicalDevice);
+
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+		std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+
+
+		float queuePriority = 1.0f;
+		for (uint32_t queueFamily : uniqueQueueFamilies)
+		{
+			VkDeviceQueueCreateInfo queueCreateInfo = {};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = queueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
+
+		VkPhysicalDeviceFeatures deviceFeatures = {};
+
+		VkDeviceCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = 0;
+
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else
+		{
+			createInfo.enabledLayerCount = 0;
+		}
+
+		if (vkCreateDevice(vkPhysicalDevice, &createInfo, nullptr, &vkDevice) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create logical device");
+
+		vkGetDeviceQueue(vkDevice, indices.graphicsFamily.value(), 0, &graphicsQueue);
+		vkGetDeviceQueue(vkDevice, indices.presentFamily.value(), 0, &presentQueue);
+	}
+
+	void BeRenderer::createSurface()
+	{
+		VkWin32SurfaceCreateInfoKHR createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+		createInfo.hwnd = window->window;
+		createInfo.hinstance = GetModuleHandle(nullptr);
+
+		if (vkCreateWin32SurfaceKHR(vkInstance, &createInfo, nullptr, &vkSurface) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create win32 surface");
+	}
+
 	QueueFamilyIndices BeRenderer::findQueueFamilies(VkPhysicalDevice device)
 	{
 		QueueFamilyIndices indices;
@@ -154,6 +215,10 @@ namespace be {
 			{
 				indices.graphicsFamily = i;
 			}
+
+			VkBool32 presentSupport = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, vkSurface, &presentSupport);
+			if (presentSupport) indices.presentFamily = i;
 		}
 
 		return indices;
@@ -161,6 +226,10 @@ namespace be {
 
 	void BeRenderer::terminateVk()
 	{
+
+		vkDestroyDevice(vkDevice, nullptr);
+
+		vkDestroySurfaceKHR(vkInstance, vkSurface, nullptr);
 
 		if (enableValidationLayers)
 		{
