@@ -28,6 +28,7 @@
     <ClInclude Include="be_renderer.h" />
     <ClInclude Include="be_window.h" />
     <ClInclude Include="first_app.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\shader.frag" />
