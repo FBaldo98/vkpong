@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="be_renderer.cpp" />
     <ClCompile Include="be_window.cpp" />
     <ClCompile Include="first_app.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="be_renderer.h" />
     <ClInclude Include="be_window.h" />
     <ClInclude Include="first_app.h" />
   </ItemGroup>

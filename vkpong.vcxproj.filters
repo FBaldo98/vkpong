@@ -24,12 +24,18 @@
     <ClCompile Include="first_app.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="be_renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="be_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="first_app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="be_renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
