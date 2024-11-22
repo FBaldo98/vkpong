@@ -15,7 +15,7 @@ namespace be
 		FirstApp() {
 			initWindow(window, WIDTH, HEIGHT, "Hello World");
 
-			renderer = new BeRenderer(&window);
+			renderer = new renderer::BeRenderer(&window);
 			renderer->init();
 		}
 
@@ -23,7 +23,7 @@ namespace be
 
 	private:
 		BeWindow window = {};
-		BeRenderer* renderer;
+		renderer::BeRenderer* renderer;
 	};
 
 }
