@@ -46,6 +46,9 @@ namespace be
 			void createSurface();
 			void createSwapChain();
 			void createImageViews();
+			void createGraphicsPipeline();
+
+			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
 			VkPresentModeKHR chooseSwapPresentMode(const ::std::vector<VkPresentModeKHR>& availablePresentModes);
 			VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
