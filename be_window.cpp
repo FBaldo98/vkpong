@@ -57,6 +57,9 @@ LRESULT CALLBACK windProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		::g_running = false;
 		break;
+	case WM_SIZE:
+		::g_resized = true;
+		break;
 	default:
 		res = DefWindowProc(wnd, msg, wParam, lParam);
 		break;

@@ -6,6 +6,7 @@
 #include<string>
 
 inline bool g_running = false;
+inline bool g_resized = false;
 
 LRESULT CALLBACK windProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
