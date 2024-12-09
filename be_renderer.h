@@ -11,6 +11,9 @@
 namespace be
 {
 	namespace renderer {
+
+		const int MAX_FRAMES_IN_FLIGHT = 2;
+
 		struct QueueFamilyIndices
 		{
 			::std::optional<uint32_t> graphicsFamily;
@@ -92,11 +95,13 @@ namespace be
 			VkPipeline vkGraphicsPipeline = VK_NULL_HANDLE;
 			VkPipelineLayout vkPipelineLayout = VK_NULL_HANDLE;
 			VkCommandPool commandPool;
-			VkCommandBuffer commandBuffer;
 
-			VkSemaphore imageAvailableSemaphore;
-			VkSemaphore renderFinishedSemaphore;
-			VkFence inFlightFence;
+			uint32_t currentFrame = 0;
+			::std::vector<VkCommandBuffer> commandBuffers;
+
+			::std::vector<VkSemaphore> imageAvailableSemaphores;
+			::std::vector<VkSemaphore> renderFinishedSemaphores;
+			::std::vector<VkFence> inFlightFences;
 
 			::std::vector<VkImage> swapChainImages;
 			::std::vector<VkImageView> swapChainImageViews;
