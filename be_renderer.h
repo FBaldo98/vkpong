@@ -58,6 +58,9 @@ namespace be
 			void createCommandBuffer();
 			void createSyncObjects();
 
+			void cleanupSwapChain();
+			void recreateSwapChain();
+
 			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
 			VkPresentModeKHR chooseSwapPresentMode(const ::std::vector<VkPresentModeKHR>& availablePresentModes);

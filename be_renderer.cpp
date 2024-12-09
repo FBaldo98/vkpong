@@ -147,7 +147,15 @@ namespace be {
 			vkResetFences(vkDevice, 1, &inFlightFences[currentFrame]);
 
 			uint32_t imageIndex;
-			vkAcquireNextImageKHR(vkDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+			VkResult result = vkAcquireNextImageKHR(vkDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+			if (result == VK_ERROR_OUT_OF_DATE_KHR)
+			{
+				recreateSwapChain();
+				return;
+			}
+			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+				throw std::runtime_error("failed to acquire swap chain image!");
 
 			vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 			recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
@@ -181,7 +189,12 @@ namespace be {
 			presentInfo.pImageIndices = &imageIndex;
 			presentInfo.pResults = nullptr;
 
-			vkQueuePresentKHR(presentQueue, &presentInfo);
+			result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+			if (result == VK_ERROR_OUT_OF_DATE_KHR)
+				recreateSwapChain();
+			else if (result != VK_SUCCESS)
+				throw std::runtime_error("failed to acquire swap chain image!");
 
 			currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 		}
@@ -637,6 +650,28 @@ namespace be {
 			}
 		}
 
+		void BeRenderer::cleanupSwapChain()
+		{
+			for (size_t i = 0; i < swapChainFramebuffers.size(); i++)
+				vkDestroyFramebuffer(vkDevice, swapChainFramebuffers[i], nullptr);
+
+			for (size_t i = 0; i < swapChainImageViews.size(); i++)
+				vkDestroyImageView(vkDevice, swapChainImageViews[i], nullptr);
+
+			vkDestroySwapchainKHR(vkDevice, swapChain, nullptr);
+		}
+
+		void BeRenderer::recreateSwapChain()
+		{
+			vkDeviceWaitIdle(vkDevice);
+
+			cleanupSwapChain();
+
+			createSwapChain();
+			createImageViews();
+			createFramebuffers();
+		}
+
 		VkShaderModule BeRenderer::createShaderModule(const::std::vector<char>& code)
 		{
 			VkShaderModuleCreateInfo createInfo = {};
@@ -782,17 +817,12 @@ namespace be {
 
 			vkDestroyCommandPool(vkDevice, commandPool, nullptr);
 
-			for (auto framebuffer : swapChainFramebuffers)
-				vkDestroyFramebuffer(vkDevice, framebuffer, nullptr);
+			cleanupSwapChain();
 
 			vkDestroyPipeline(vkDevice, vkGraphicsPipeline, nullptr);
 			vkDestroyPipelineLayout(vkDevice, vkPipelineLayout, nullptr);
 			vkDestroyRenderPass(vkDevice, vkRenderPass, nullptr);
 
-			for (auto iv : swapChainImageViews)
-				vkDestroyImageView(vkDevice, iv, nullptr);
-
-			vkDestroySwapchainKHR(vkDevice, swapChain, nullptr);
 			vkDestroyDevice(vkDevice, nullptr);
 			vkDestroySurfaceKHR(vkInstance, vkSurface, nullptr);
 
