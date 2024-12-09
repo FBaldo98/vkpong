@@ -149,7 +149,7 @@ namespace be {
 			uint32_t imageIndex;
 			vkAcquireNextImageKHR(vkDevice, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
-			vkResetCommandBuffer(commandBuffer, imageIndex);
+			vkResetCommandBuffer(commandBuffer, 0);
 			recordCommandBuffer(commandBuffer, imageIndex);
 
 			VkSubmitInfo submitInfo = {};;
