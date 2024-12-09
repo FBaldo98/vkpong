@@ -87,6 +87,8 @@ namespace be {
 
 			createCommandTool();
 
+			createVertexBuffer();
+
 			createCommandBuffer();
 
 			createSyncObjects();
@@ -452,12 +454,15 @@ namespace be {
 			dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 			dynamicState.pDynamicStates = dynamicStates.data();
 
+			auto bindingDescription = Vertex::getBindingDescription();
+			auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
 			VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
 			vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-			vertexInputInfo.vertexBindingDescriptionCount = 0;
-			vertexInputInfo.pVertexBindingDescriptions = nullptr;
-			vertexInputInfo.vertexAttributeDescriptionCount = 0;
-			vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+			vertexInputInfo.vertexBindingDescriptionCount = 1;
+			vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+			vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+			vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 			VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 			inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -655,6 +660,18 @@ namespace be {
 			}
 		}
 
+		void BeRenderer::createVertexBuffer()
+		{
+			VkBufferCreateInfo bufferInfo = {};
+			bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+			bufferInfo.size = sizeof(vertices[0]) * vertices.size();
+			bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+			bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+			if (vkCreateBuffer(vkDevice, &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS)
+				throw std::runtime_error("Failed to create vertex buffer");
+		}
+
 		void BeRenderer::cleanupSwapChain()
 		{
 			for (size_t i = 0; i < swapChainFramebuffers.size(); i++)
@@ -819,6 +836,8 @@ namespace be {
 				vkDestroySemaphore(vkDevice, renderFinishedSemaphores[i], nullptr);
 				vkDestroyFence(vkDevice, inFlightFences[i], nullptr);
 			}
+
+			vkDestroyBuffer(vkDevice, vertexBuffer, nullptr);
 
 			vkDestroyCommandPool(vkDevice, commandPool, nullptr);
 
