@@ -144,7 +144,6 @@ namespace be {
 		void BeRenderer::drawFrame()
 		{
 			vkWaitForFences(vkDevice, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
-			vkResetFences(vkDevice, 1, &inFlightFences[currentFrame]);
 
 			uint32_t imageIndex;
 			VkResult result = vkAcquireNextImageKHR(vkDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
@@ -156,6 +155,8 @@ namespace be {
 			}
 			else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 				throw std::runtime_error("failed to acquire swap chain image!");
+
+			vkResetFences(vkDevice, 1, &inFlightFences[currentFrame]);
 
 			vkResetCommandBuffer(commandBuffers[currentFrame], 0);
 			recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
