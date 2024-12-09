@@ -48,6 +48,7 @@ namespace be
 			void createImageViews();
 			void createGraphicsPipeline();
 			void createRenderPass();
+			void createFramebuffers();
 
 			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
@@ -88,6 +89,7 @@ namespace be
 
 			::std::vector<VkImage> swapChainImages;
 			::std::vector<VkImageView> swapChainImageViews;
+			::std::vector<VkFramebuffer> swapChainFramebuffers;
 
 			const ::std::vector<const char*> validationLayers = {
 				"VK_LAYER_KHRONOS_validation"

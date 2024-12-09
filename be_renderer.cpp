@@ -83,6 +83,8 @@ namespace be {
 
 			createGraphicsPipeline();
 
+			createFramebuffers();
+
 			return true;
 		}
 
@@ -452,6 +454,30 @@ namespace be {
 				throw std::runtime_error("failed to create render pass");
 		}
 
+		void BeRenderer::createFramebuffers()
+		{
+			swapChainFramebuffers.resize(swapChainImageViews.size());
+
+			for (size_t i = 0; i < swapChainImageViews.size(); i++)
+			{
+				VkImageView attachments[] = {
+					swapChainImageViews[i]
+				};
+
+				VkFramebufferCreateInfo framebufferInfo = {};
+				framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+				framebufferInfo.renderPass = vkRenderPass;
+				framebufferInfo.attachmentCount = 1;
+				framebufferInfo.pAttachments = attachments;
+				framebufferInfo.width = swapChainExtent.width;
+				framebufferInfo.height = swapChainExtent.height;
+				framebufferInfo.layers = 1;
+
+				if (vkCreateFramebuffer(vkDevice, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
+					throw std::runtime_error("Failed to create framebuffer!");
+			}
+		}
+
 		VkShaderModule BeRenderer::createShaderModule(const::std::vector<char>& code)
 		{
 			VkShaderModuleCreateInfo createInfo = {};
@@ -589,6 +615,9 @@ namespace be {
 
 		void BeRenderer::terminateVk()
 		{
+			for (auto framebuffer : swapChainFramebuffers)
+				vkDestroyFramebuffer(vkDevice, framebuffer, nullptr);
+
 			vkDestroyPipeline(vkDevice, vkGraphicsPipeline, nullptr);
 			vkDestroyPipelineLayout(vkDevice, vkPipelineLayout, nullptr);
 			vkDestroyRenderPass(vkDevice, vkRenderPass, nullptr);
