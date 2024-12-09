@@ -6,6 +6,7 @@ namespace be {
 	{
 		while (::g_running) {
 			window.handleMessages();
+			renderer->drawFrame();
 		}
 	}
 

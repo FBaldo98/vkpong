@@ -36,6 +36,8 @@ namespace be
 			~BeRenderer();
 
 			bool init();
+			void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+			void drawFrame();
 
 		private:
 			void setupDebugMessenger(const VkDebugUtilsMessengerCreateInfoEXT& createInfo);
@@ -51,6 +53,7 @@ namespace be
 			void createFramebuffers();
 			void createCommandTool();
 			void createCommandBuffer();
+			void createSyncObjects();
 
 			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
@@ -90,6 +93,10 @@ namespace be
 			VkPipelineLayout vkPipelineLayout = VK_NULL_HANDLE;
 			VkCommandPool commandPool;
 			VkCommandBuffer commandBuffer;
+
+			VkSemaphore imageAvailableSemaphore;
+			VkSemaphore renderFinishedSemaphore;
+			VkFence inFlightFence;
 
 			::std::vector<VkImage> swapChainImages;
 			::std::vector<VkImageView> swapChainImageViews;
