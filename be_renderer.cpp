@@ -85,6 +85,10 @@ namespace be {
 
 			createFramebuffers();
 
+			createCommandTool();
+
+			createCommandBuffer();
+
 			return true;
 		}
 
@@ -478,6 +482,32 @@ namespace be {
 			}
 		}
 
+		void BeRenderer::createCommandTool()
+		{
+			QueueFamilyIndices queueFamilyIndices = findQueueFamilies(vkPhysicalDevice);
+
+			VkCommandPoolCreateInfo poolInfo = {};
+			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+			poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+			 
+			if (vkCreateCommandPool(vkDevice, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
+				throw std::runtime_error("failed to create command pool");
+		}
+
+		void BeRenderer::createCommandBuffer()
+		{
+			VkCommandBufferAllocateInfo allocInfo = {};
+			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+			allocInfo.commandPool = commandPool;
+			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			allocInfo.commandBufferCount = 1;
+
+			if (vkAllocateCommandBuffers(vkDevice, &allocInfo, &commandBuffer) != VK_SUCCESS)
+				throw std::runtime_error("failed to allocate command buffer");
+
+		}
+
 		VkShaderModule BeRenderer::createShaderModule(const::std::vector<char>& code)
 		{
 			VkShaderModuleCreateInfo createInfo = {};
@@ -615,6 +645,8 @@ namespace be {
 
 		void BeRenderer::terminateVk()
 		{
+			vkDestroyCommandPool(vkDevice, commandPool, nullptr);
+
 			for (auto framebuffer : swapChainFramebuffers)
 				vkDestroyFramebuffer(vkDevice, framebuffer, nullptr);
 

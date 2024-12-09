@@ -49,6 +49,8 @@ namespace be
 			void createGraphicsPipeline();
 			void createRenderPass();
 			void createFramebuffers();
+			void createCommandTool();
+			void createCommandBuffer();
 
 			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
@@ -86,6 +88,8 @@ namespace be
 			VkRenderPass vkRenderPass = VK_NULL_HANDLE;
 			VkPipeline vkGraphicsPipeline = VK_NULL_HANDLE;
 			VkPipelineLayout vkPipelineLayout = VK_NULL_HANDLE;
+			VkCommandPool commandPool;
+			VkCommandBuffer commandBuffer;
 
 			::std::vector<VkImage> swapChainImages;
 			::std::vector<VkImageView> swapChainImageViews;
