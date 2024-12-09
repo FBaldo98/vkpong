@@ -9,7 +9,7 @@
 #include <limits>
 #include <algorithm>
 
-#include "utils.h";
+#include "utils.h"
 
 namespace be {
 	namespace renderer {
