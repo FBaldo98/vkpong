@@ -47,6 +47,7 @@ namespace be
 			void createSwapChain();
 			void createImageViews();
 			void createGraphicsPipeline();
+			void createRenderPass();
 
 			VkShaderModule createShaderModule(const ::std::vector<char>& code);
 
@@ -80,6 +81,10 @@ namespace be
 
 			VkFormat swapChainImageFormat;
 			VkExtent2D swapChainExtent;
+
+			VkRenderPass vkRenderPass = VK_NULL_HANDLE;
+			VkPipeline vkGraphicsPipeline = VK_NULL_HANDLE;
+			VkPipelineLayout vkPipelineLayout = VK_NULL_HANDLE;
 
 			::std::vector<VkImage> swapChainImages;
 			::std::vector<VkImageView> swapChainImageViews;
